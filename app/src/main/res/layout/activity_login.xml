@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:layout_gravity="center"
+    android:background="@color/login_background"
+    android:focusableInTouchMode="true"
+    android:gravity="center">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="80dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="30dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
+
+                <TextView
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="Welcome!\nLog in to\ncontinue"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="100dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/login_icon"/>
+
+            </RelativeLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputEmail"
+                style="@style/parent"
+                android:layout_marginTop="@dimen/loginViewsMargin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email"
+                    android:drawableEnd="@drawable/ic_user"
+                    style="@style/modifiedEditText"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputPassword"
+                style="@style/parent"
+                android:layout_marginTop="@dimen/loginViewsMargin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password"
+                    style="@style/modifiedEditText"
+                    android:hint="@string/password"
+                    android:drawableEnd="@drawable/ic_pass"
+                    android:inputType="textPassword"
+                    android:maxLines="1"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/viewParent"
+                android:onClick="goToForgetPassPage"
+                android:id="@+id/forgotPassword"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@string/forgot_password"
+                android:textColor="@color/blueTextColor"
+                android:textSize="@dimen/newsMoreTextSize"/>
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progress"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputPassword"/>
+
+
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                android:id="@+id/loginButton"
+                style="@style/loginButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/loginViewsMargin"
+                android:text="@string/login"
+                app:initialCornerAngle="27dp"
+                app:spinning_bar_width="4dp"
+                app:spinning_bar_color="#fff"
+                app:spinning_bar_padding="6dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/loginViewsMargin"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/need_an_account"
+                    android:textColor="@color/themeColor"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/registerText"
+                    android:gravity="center"
+                    android:onClick="loginClicked"
+                    android:text="@string/register_now"
+                    android:layout_width="150dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:textColor="#b6a1f7"
+                    android:textStyle="bold"
+                    android:textSize="17sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:src="@drawable/app_logo"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <View
+        android:layout_width="11dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/ic_side_bg" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="30dp"
+        android:onClick="loginClicked"
+        android:src="@drawable/add_icon"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="15dp"
+        android:adjustViewBounds="false"
+        android:onClick="onBackPressed"
+        android:src="@drawable/regis_back_img"/>
+</RelativeLayout>

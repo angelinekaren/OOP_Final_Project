@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "685215897874",
+    "project_id": "focus-planner-6d872",
+    "storage_bucket": "focus-planner-6d872.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685215897874:android:d054a4810c8e833610fbcb",
+        "android_client_info": {
+          "package_name": "com.example.plannerproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685215897874-v4lntbs820glccb1oj263t1oacfbl46r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.plannerproject",
+            "certificate_hash": "d6ebc97b3f6a02f909ddc613040dba7e9c7eae3d"
+          }
+        },
+        {
+          "client_id": "685215897874-l7utcv3amu2hh3bpdictojk1upapmhs3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAModvWA_fLa43p5wzoWorcnuV6fzts0aM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685215897874-l7utcv3amu2hh3bpdictojk1upapmhs3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

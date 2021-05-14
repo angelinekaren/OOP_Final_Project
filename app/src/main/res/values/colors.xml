@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#000</color>
+    <color name="colorAccent">#4287f5</color>
+    <color name="themeColor">#4287f5</color>
+
+    <color name="blackTextColor">#020000</color>
+    <color name="whiteTextColor">#fff</color>
+    <color name="blueTextColor">#4287f5</color>
+    <color name="contentTextColor">#020000</color>
+    <color name="register_background">#4287f5</color>
+    <color name="welcome_background">#4287f5</color>
+    <color name="login_background">#fff</color>
+    <color name="stated_checked">#d7d7d9</color>
+
+
+</resources>

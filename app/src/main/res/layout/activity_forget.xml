@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ForgetActivity"
+    android:layout_gravity="center"
+    android:background="@color/login_background"
+    android:focusableInTouchMode="true"
+    android:gravity="center"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+
+                android:layout_height="200dp">
+
+                <TextView
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:textSize="30dp"
+                    android:textColor="@color/blackTextColor"
+                    android:text="Want to\nReset your\nPassword?"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="150dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/forgot_pass_icon"/>
+
+            </RelativeLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="30dp"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    tools:ignore="ExtraText">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/forget_password"
+                        android:textSize="22sp"
+                        android:layout_margin="16dp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/blueTextColor"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/editEmail"
+                        style="@style/parent"
+                        android:layout_margin="@dimen/loginViewsMargin"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputForgotEmail"
+                            android:drawableEnd="@drawable/ic_user"
+                            android:background="@drawable/border_bottom"
+                            android:hint="@string/email"
+                            android:inputType="textEmailAddress"
+                            android:maxLines="1"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progress"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/inputPassword"/>
+
+                    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                        android:id="@+id/forgotPasswordButton"
+                        style="@style/loginButton"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:text="Forget Password"
+                        app:initialCornerAngle="27dp"
+                        app:spinning_bar_width="4dp"
+                        app:spinning_bar_color="#fff"
+                        app:spinning_bar_padding="6dp"/>
+
+                </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="70dp"
+                android:gravity="center"
+                android:weightSum="12">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="220px"
+                    android:src="@drawable/app_logo_regis"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="15dp"
+        android:adjustViewBounds="false"
+        android:onClick="onBackPressed"
+        android:src="@drawable/regis_back_img"/>
+
+
+</RelativeLayout>
