@@ -62,6 +62,23 @@
                     tools:ignore="ExtraText">
 
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/inputFullname"
+                        style="@style/parent"
+                        android:layout_margin="@dimen/loginViewsMargin"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fullname"
+                            style="@style/modifiedEditText"
+                            android:drawableEnd="@drawable/ic_user"
+                            android:hint="@string/fullname"
+                            android:inputType="textPersonName"
+                            android:maxLines="1"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/inputEmail"
@@ -142,7 +159,6 @@
                         <TextView
                             android:id="@+id/loginText"
                             android:gravity="center"
-                            android:onClick="loginClicked"
                             android:text="@string/log_in"
                             android:layout_width="150dp"
                             android:paddingStart="0dp"

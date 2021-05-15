@@ -17,10 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
@@ -28,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     static final float END_SCALE = 0.7f;
     LinearLayout main_content;
+    private FirebaseAuth mFirebaseAuth;
+    private HomeFragment homeFragment;
+    private ProfileFragment profileFragment;
 
 
     @Override
@@ -43,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Sets toolbar as the app bar (position the toolbar at the top of the activity's layout)
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Setting the NavigationIcon with menu_nav_icon
         toolbar.setNavigationIcon(R.drawable.menu_nav_icon);
@@ -58,16 +68,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Set a listener that will be notified when a menu item is selected
         navigationView.setNavigationItemSelectedListener(MainActivity.this);
 
+        homeFragment = new HomeFragment();
+        profileFragment = new ProfileFragment();
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new HomeFragment()).commit();
+            setFragment(homeFragment);
             navigationView.setCheckedItem(R.id.home);
         }
 
         // Call function
         animateNavigationDrawer();
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
     }
+
+    public void setFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
+    }
+
 
     // Back Pressed: go back to this MainActivity page
     @Override
@@ -88,18 +109,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case (R.id.home):
                 navigationView.setCheckedItem(R.id.home);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new HomeFragment()).commit();
+                setFragment(homeFragment);
                 break;
             case (R.id.profile):
                 navigationView.setCheckedItem(R.id.profile);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+                setFragment(profileFragment);
                 break;
             case (R.id.logout):
-                Intent intent_2 = new Intent(this, WelcomeActivity.class);
-                startActivity(intent_2);
-                finish();
+                logout();
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -131,6 +148,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 main_content.setTranslationX(x_translation);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if(mFirebaseUser != null) {
+            // User logged in
+        }
+        else {
+            // No one logged in
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void logout() {
+        mFirebaseAuth.signOut();
+        finish();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
 }

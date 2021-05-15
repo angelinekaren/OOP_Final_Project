@@ -15,5 +15,6 @@
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="close_navigation_drawer">Close navigation drawer</string>
     <string name="powered_by">Powered by FocusPlanner.co</string>
+    <string name="fullname">Fullname</string>
 </resources>
 

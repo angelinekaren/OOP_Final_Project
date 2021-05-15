@@ -25,8 +25,17 @@
             android:background="#00008577"
             app:navigationIcon="@drawable/menu_nav_icon"
             android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            />
+            android:theme="@style/ThemeOverlay.AppCompat.Light">
+
+            <ImageView
+                android:id="@+id/icon_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/app_logo_regis"
+                android:layout_gravity="center"
+                android:paddingEnd="60dp"/>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
             android:id="@+id/fragment_container"
