@@ -56,11 +56,11 @@
             android:text="Email"/>
 
         <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
-            android:id="@+id/resetPassword"
+            android:id="@+id/updatePassword"
             style="@style/loginButton"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
-            android:text="UPDATE"
+            android:text="Update Password"
             app:initialCornerAngle="27dp"
             app:spinning_bar_width="4dp"
             app:spinning_bar_color="#fff"
