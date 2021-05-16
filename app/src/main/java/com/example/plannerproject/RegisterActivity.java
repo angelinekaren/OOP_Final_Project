@@ -23,6 +23,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,6 +37,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private TextView textViewLogin;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
+    private DatabaseReference database;
+    private String fullname, email, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         mAuth = FirebaseAuth.getInstance();
 
-        registerButton.setOnClickListener(this);
+        if(mAuth.getCurrentUser()!=null){
+            finish();
+            Toast.makeText(RegisterActivity.this, "User existed", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+        else {
+            registerButton.setOnClickListener(this);
+        }
         textViewLogin.setOnClickListener(this);
 
     }
@@ -94,8 +104,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void registerUser() {
-        String fullname, email, password;
-
         fullname = textInputEditTextFullname.getText().toString().trim();
         email = textInputEditTextEmail.getText().toString().trim();
         password = textInputEditTextPassword.getText().toString().trim();
@@ -146,13 +154,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 mAuth.signOut();
-                                Toast.makeText(RegisterActivity.this, "User registration is successful", Toast.LENGTH_SHORT).show();
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                updateUI(user);
                                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
                                 progressBar.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(RegisterActivity.this, "Registration failed! Try again!", Toast.LENGTH_SHORT).show();
+                                updateUI(null);
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
@@ -163,9 +173,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
+    }
 
+    public void updateUI(FirebaseUser account){
+        if(account != null){
+            Toast.makeText(RegisterActivity.this, "User registration is successful", Toast.LENGTH_SHORT).show();
 
-
+        }else {
+            Toast.makeText(RegisterActivity.this, "Registration failed! Try again!", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }

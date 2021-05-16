@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete Account"
+        android:textColor="@color/blackTextColor"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Are you sure you want to delete your account?"
+        android:textColor="@color/blackTextColor"
+        android:textSize="16sp"
+        android:textAlignment="center"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editDeletePassword"
+        app:passwordToggleEnabled="true"
+        android:layout_marginTop="20dp"
+        style="@style/parent"
+
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputDeletePassword"
+            android:background="@drawable/border_bottom"
+            android:hint="Confirmation password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- CircularProgressButton: Update Password -->
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/deleteButton"
+        style="@style/loginButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="Yes, delete"
+        app:initialCornerAngle="27dp"
+        app:spinning_bar_width="4dp"
+        app:spinning_bar_color="#fff"
+        app:spinning_bar_padding="6dp"/>
+
+</LinearLayout>

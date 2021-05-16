@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,49 +67,76 @@ public class LoginActivity extends AppCompatActivity {
         forgetPassText = findViewById(R.id.forgotPassword);
 
         mAuth = FirebaseAuth.getInstance();
-
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onClick(View v) {
-                String email, password;
-
-                email = textInputEditTextEmail.getText().toString().trim();
-                password = textInputEditTextPassword.getText().toString().trim();
-
-                if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
-                }
-                if(TextUtils.isEmpty(email)) {
-                    textInputEditTextEmail.setError("Field is required!");
-                }
-                if (TextUtils.isEmpty(password)){
-                    textInputEditTextPassword.setError("Field is required!");
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user!=null){
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
                 else {
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    loginButton.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()) {
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                                progressBar.setVisibility(View.GONE);
-                            }
-                            else {
-                                String error = task.getException().toString();
-                                Toast.makeText(LoginActivity.this, "Registration failed!" + error, Toast.LENGTH_SHORT).show();
-                                progressBar.setVisibility(View.GONE);
-                            }
+                        public void onClick(View v) {
+                            loginUser();
                         }
                     });
                 }
             }
-        });
+        };
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mAuthListener != null)
+            mAuth.removeAuthStateListener(mAuthListener);
+    }
 
 
+    private void loginUser() {
+        String email, password;
+
+        email = textInputEditTextEmail.getText().toString().trim();
+        password = textInputEditTextPassword.getText().toString().trim();
+
+        if(TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
+        }
+        if(TextUtils.isEmpty(email)) {
+            textInputEditTextEmail.setError("Field is required!");
+        }
+        if (TextUtils.isEmpty(password)){
+            textInputEditTextPassword.setError("Field is required!");
+        }
+        else {
+            progressBar.setVisibility(View.VISIBLE);
+
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUI(user);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    else {
+                        updateUI(null);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
     }
 
 
@@ -152,6 +180,17 @@ public class LoginActivity extends AppCompatActivity {
         finish();
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.stay);
+    }
+
+    public void updateUI(FirebaseUser account){
+
+        if(account != null){
+            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+        }else {
+            Toast.makeText(LoginActivity.this, "Login failed! Try again!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 

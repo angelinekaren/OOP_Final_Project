@@ -78,13 +78,13 @@
         app:spinning_bar_width="4dp" />
 
     <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/signUpButton"
         style="@style/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_background"
         android:text="@string/signup"
         android:textColor="@color/blackTextColor"
-        android:onClick="signupClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"

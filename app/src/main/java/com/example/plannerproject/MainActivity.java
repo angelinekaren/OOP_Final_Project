@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else {
             // No one logged in
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void logout() {
         mFirebaseAuth.signOut();
         finish();
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
     }
 

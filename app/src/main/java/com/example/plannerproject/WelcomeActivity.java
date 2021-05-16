@@ -14,7 +14,7 @@ import android.view.WindowManager;
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
 public class WelcomeActivity extends AppCompatActivity {
-    CircularProgressButton loginButton;
+    CircularProgressButton loginButton, signUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,17 +23,23 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 
         loginButton = findViewById(R.id.loginButton);
+        signUpButton = findViewById(R.id.signUpButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-
-                overridePendingTransition(R.anim.slide_in_right,  R.anim.stay);
+                loginClicked();
             }
         });
+
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signupClicked();
+            }
+        });
+
+
     }
 
     public void changeStatusBar() {
@@ -43,14 +49,15 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-//    public void loginClicked(View view) {
-//        Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-//        startActivity(intent);
-//
-//        overridePendingTransition(R.anim.slide_in_right,  R.anim.stay);
-//    }
+    public void loginClicked() {
+        Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
 
-    public void signupClicked(View view) {
+        overridePendingTransition(R.anim.slide_in_right,  R.anim.stay);
+    }
+
+    public void signupClicked() {
         Intent intent = new Intent(WelcomeActivity.this, RegisterActivity.class);
         startActivity(intent);
         finish();
