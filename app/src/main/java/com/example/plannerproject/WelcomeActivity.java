@@ -11,10 +11,16 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
 public class WelcomeActivity extends AppCompatActivity {
     CircularProgressButton loginButton, signUpButton;
+    FirebaseAuth mAuth;
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +30,34 @@ public class WelcomeActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signUpButton);
+
+        loginButton.setVisibility(View.INVISIBLE);
+        signUpButton.setVisibility(View.INVISIBLE);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            mAuth.getCurrentUser().reload().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+
+                    currentUser = mAuth.getCurrentUser();
+
+
+                    if (currentUser != null) {
+
+                        Intent MainActivity = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(MainActivity);
+                        WelcomeActivity.this.finish();
+                    }
+                }
+            });
+
+        } else {
+            loginButton.setVisibility(View.VISIBLE);
+            signUpButton.setVisibility(View.VISIBLE);
+            System.out.println("user not available");
+        }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

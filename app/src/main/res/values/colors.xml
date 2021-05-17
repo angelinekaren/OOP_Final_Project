@@ -14,5 +14,11 @@
     <color name="login_background">#fff</color>
     <color name="stated_checked">#d7d7d9</color>
 
+    <!-- Circle Color Select -->
+    <color name="blueCircle">#4287f5</color>
+    <color name="pinkCircle">#f595ac</color>
+    <color name="redCircle">#ff0800</color>
+    <color name="purpleCircle">#c573ff</color>
+    <color name="tealCircle">#6eebd0</color>
 
 </resources>

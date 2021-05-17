@@ -145,6 +145,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 deleteUserAccount();
+
             }
         });
 
@@ -192,6 +193,9 @@ public class ProfileFragment extends Fragment {
                                 });
                                 pd.dismiss();
                                 Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
+                                FirebaseAuth.getInstance().signOut();
+                                Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+                                startActivity(intent);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -210,11 +214,6 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "Failed to authenticate", Toast.LENGTH_SHORT).show();
             }
         });
-
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getActivity(), WelcomeActivity.class);
-        startActivity(intent);
-
     }
 
     private void showEditProfileDialog() {

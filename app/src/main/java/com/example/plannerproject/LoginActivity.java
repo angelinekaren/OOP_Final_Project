@@ -67,42 +67,48 @@ public class LoginActivity extends AppCompatActivity {
         forgetPassText = findViewById(R.id.forgotPassword);
 
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+//        mAuthListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                if(user!=null){
+//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//                else {
+//                    loginButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            loginUser();
+//                        }
+//                    });
+//                }
+//            }
+//        };
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user!=null){
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-                else {
-                    loginButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            loginUser();
-                        }
-                    });
-                }
+            public void onClick(View v) {
+                loginUser();
             }
-        };
+        });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        mAuth.addAuthStateListener(mAuthListener);
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        if(mAuthListener != null)
+//            mAuth.removeAuthStateListener(mAuthListener);
+//    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mAuthListener != null)
-            mAuth.removeAuthStateListener(mAuthListener);
-    }
 
-
-    private void loginUser() {
+    private void loginUser(){
         String email, password;
 
         email = textInputEditTextEmail.getText().toString().trim();

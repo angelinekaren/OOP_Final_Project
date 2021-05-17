@@ -153,9 +153,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                mAuth.signOut();
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 updateUI(user);
+                                mAuth.signOut();
                                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
