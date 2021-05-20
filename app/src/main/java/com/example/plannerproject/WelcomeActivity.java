@@ -31,8 +31,8 @@ public class WelcomeActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signUpButton);
 
-        loginButton.setVisibility(View.INVISIBLE);
-        signUpButton.setVisibility(View.INVISIBLE);
+//        loginButton.setVisibility(View.INVISIBLE);
+//        signUpButton.setVisibility(View.INVISIBLE);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -79,7 +79,7 @@ public class WelcomeActivity extends AppCompatActivity {
     public void changeStatusBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            window.setStatusBarColor(getResources().getColor(R.color.welcome_background));
+            window.setStatusBarColor(getResources().getColor(R.color.darkBlue));
         }
     }
 

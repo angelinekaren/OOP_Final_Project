@@ -11,6 +11,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,10 +25,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
@@ -35,9 +50,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static final float END_SCALE = 0.7f;
     LinearLayout main_content;
     private FirebaseAuth mFirebaseAuth;
-    private HomeFragment homeFragment;
     private ProfileFragment profileFragment;
-
+    private HomeFragment homeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +68,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        // Setting the NavigationIcon with menu_nav_icon
-        toolbar.setNavigationIcon(R.drawable.menu_nav_icon);
-
+        // Setting the NavigationIcon with ic_menu
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
         // Bring navigationView to front -> make navigation item clickable
         navigationView.bringToFront();
 
@@ -71,15 +84,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         homeFragment = new HomeFragment();
         profileFragment = new ProfileFragment();
 
-        if (savedInstanceState == null) {
-            setFragment(homeFragment);
-            navigationView.setCheckedItem(R.id.home);
-        }
-
         // Call function
         animateNavigationDrawer();
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        if(savedInstanceState == null)
+        {
+            setFragment(homeFragment);
+        }
+
 
     }
 

@@ -122,7 +122,7 @@
                     android:paddingStart="30dp"
                     android:paddingEnd="0dp"
                     android:text="@string/need_an_account"
-                    android:textColor="@color/themeColor"
+                    android:textColor="@color/blueTextColor"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 

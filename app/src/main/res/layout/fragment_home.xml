@@ -2,6 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".HomeFragment"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -11,7 +13,6 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_marginTop="60dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
@@ -25,7 +26,7 @@
             android:clickable="true"
             app:tint="@color/whiteTextColor"
             android:src="@drawable/ic_baseline_add_24"
-            android:backgroundTint="@color/blueTextColor"/>
+            android:backgroundTint="@color/colorTime"/>
 
 
 

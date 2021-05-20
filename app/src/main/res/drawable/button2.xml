@@ -4,7 +4,7 @@
         android:radius="20dp" />
 
     <solid
-        android:color="@color/colorTime"/>
+        android:color="@color/register_background"/>
 
     <padding
         android:left="10dp"

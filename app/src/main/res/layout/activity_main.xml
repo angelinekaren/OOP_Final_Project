@@ -22,16 +22,17 @@
             android:id="@+id/toolbar_icon"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#00008577"
-            app:navigationIcon="@drawable/menu_nav_icon"
+            android:background="@color/colorTime"
+            app:navigationIcon="@drawable/ic_menu"
             android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Light">
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
             <ImageView
                 android:id="@+id/icon_toolbar"
-                android:layout_width="wrap_content"
+                android:layout_width="210dp"
+                android:layout_marginStart="80dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/app_logo_regis"
+                android:src="@drawable/app_logo_2"
                 android:layout_gravity="center"
                 android:paddingEnd="60dp"/>
 
@@ -41,6 +42,8 @@
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+
 
     </LinearLayout>
 
@@ -54,10 +57,5 @@
         app:itemIconTint="@drawable/drawer_item_color"
         app:itemTextColor="@drawable/drawer_item_color"
         android:layout_gravity="start"/>
-
-
-
-
-
 
 </androidx.drawerlayout.widget.DrawerLayout>

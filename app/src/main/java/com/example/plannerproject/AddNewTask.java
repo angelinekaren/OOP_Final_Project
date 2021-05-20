@@ -29,12 +29,17 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -45,11 +50,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private EditText getTaskInput;
     private TextView getSetDate;
     private Button getSaveButton;
-    public static ImageView defaultCircle, blueCircle, pinkCircle, purpleCircle, redCircle, tealCircle;
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private Context context;
     private String getDate;
+    private String dbDate, dbTask;
+    private String id;
+    private String taskId;
+    private boolean isUpdated = false;
 
     public static AddNewTask newInstance() {
         return new AddNewTask();
@@ -76,6 +84,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().child("Tasks").child(userUid);
 
+
         getTaskInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -101,6 +110,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
+        updatedTask();
+
         getSetDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,36 +128,78 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
     }
 
+    private void updatedTask() {
+        final Bundle bundle = getArguments();
+        if (bundle != null) {
+            isUpdated = true;
+            String task = bundle.getString("task");
+            taskId = bundle.getString("id");
+            String date = bundle.getString("dateTime");
+
+            getSetDate.setText(date);
+            getTaskInput.setText(task);
+
+            if (task.length() > 0) {
+                getSaveButton.setEnabled(false);
+                getSaveButton.setBackgroundColor(Color.GRAY);
+            }
+
+        }
+    }
+
     private void setNewTask() {
         String task = getTaskInput.getText().toString();
-        String id = ref.push().getKey();
+        id = ref.push().getKey();
 
+        if (isUpdated) {
 
-        if (task.isEmpty()) {
-            Toast.makeText(context, "Required to fill in new task!", Toast.LENGTH_SHORT).show();
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("task", task);
+            result.put("dateTime", getDate);
+
+            ref.child(taskId).updateChildren(result)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            // Successfully updated
+                            Toast.makeText(context, "Task updated", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Failed
+                            Toast.makeText(getActivity(), "Error updating", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
         else {
+            if (task.isEmpty()) {
+                Toast.makeText(context, "Required to fill in new task!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                TaskModel taskModel = new TaskModel(id, task, getDate, 0);
 
-            TaskModel taskModel = new TaskModel(id, task, getDate, 0);
+                ref.child(id).setValue(taskModel).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "Task successfully saved!", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(context, "Failed to saved task", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
-            ref.child(id).setValue(taskModel).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(context, "Task successfully saved!", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(context, "Failed to saved task", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            dismiss();
         }
+        dismiss();
     }
 
     private void viewCalendar() {
@@ -186,32 +239,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
         }
 
     }
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        View view;
-        TextView getDate;
-        CheckBox checkBox;
 
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            view = itemView;
-
-            getDate = view.findViewById(R.id.due_date);
-            checkBox = view.findViewById(R.id.materialCheckBox);
-
-        }
-
-        public void setDate(String date) {
-            getDate.setText(date);
-        }
-
-        public void checkStatus(int status) {
-            checkBox.setChecked(toBoolean(status));
-        }
-
-        public boolean toBoolean(int status) {
-            return status != 0;
-        }
-    }
 }
 
 

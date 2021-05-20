@@ -11,36 +11,24 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/addTaskTextInput"
+        android:id="@+id/timeInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/colorTime"
-        android:hint="Enter your new task"/>
+        android:hint="Set time (Minutes)"/>
 
-    <TextView
-        android:id="@+id/setDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:drawableRight="@drawable/ic_calendar"
-        android:drawablePadding="8dp"
-        android:text="Set Date"
-        android:textColor="@color/colorTime"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTaskTextInput" />
 
     <Button
-        android:id="@+id/saveButton"
+        android:id="@+id/setButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/colorTime"
-        android:text="Save"
+        android:text="Set"
         android:textColor="@color/whiteTextColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTaskTextInput" />
+        app:layout_constraintTop_toBottomOf="@+id/timeInput" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

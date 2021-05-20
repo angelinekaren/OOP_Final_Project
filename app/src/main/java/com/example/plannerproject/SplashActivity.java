@@ -34,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
             // Set StatusBar color same like register_background color
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(R.color.register_background));
+            window.setStatusBarColor(getResources().getColor(R.color.darkBlue));
         }
     }
 }
