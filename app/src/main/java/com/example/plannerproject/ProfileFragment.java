@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private ProgressBar progressBar;
     CircularProgressButton updatePasswordButton, getUpdatePasswordButton, getUpdateNameButton, getDeleteButton, deleteButton;
     DatabaseReference ref;
+    private FirebaseUser user;
     ProgressDialog pd;
     private String oldPassword, newPassword, newName, deletePassword;
     private String email, fullname;
@@ -75,6 +76,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         // Initialize progress dialog
         pd = new ProgressDialog(getActivity());
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
 
         profileDetails();
 
@@ -106,17 +110,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     public void profileDetails() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+        String email = user.getEmail();
         if (user!= null) {
-            ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+            getEmail.setText(String.format("Email: %s", email));
 
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     User user = snapshot.getValue(User.class);
 
-                    getEmail.setText(String.format("Email: %s", user.getEmail()));
                     getFullname.setText(String.format("Fullname: %s", user.getFullname()));
 
                 }
@@ -172,8 +174,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private void deleteAccount(String password) {
         pd.show();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), password);
 
         user.reauthenticate(authCredential).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -183,12 +183,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                Query userQuery = ref.orderByChild("userID").equalTo(user.getUid());
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                        .child("Tasks").child(user.getUid());
+                                reference.removeValue();
+                                DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference()
+                                        .child("Completed").child(user.getUid());
+                                reference1.removeValue();
+                                userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot appleSnapshot : snapshot.getChildren()) {
-                                            appleSnapshot.getRef().removeValue();
-                                        }
+                                        snapshot.getRef().removeValue();
                                     }
 
                                     @Override
@@ -196,10 +201,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
                                     }
                                 });
+
                                 pd.dismiss();
+
                                 Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
+
+
                                 FirebaseAuth.getInstance().signOut();
+
                                 Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+
                                 startActivity(intent);
                             }
                         })

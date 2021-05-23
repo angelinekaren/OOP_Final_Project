@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,16 +53,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <ImageView
+                    android:id="@+id/flagPriority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:src="@drawable/ic_flag"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="@id/taskTitle" />
+
                 <TextView
                     android:id="@+id/taskTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="This is task 1"
                     android:singleLine="true"
+                    android:layout_marginStart="10dp"
                     android:textSize="20sp"
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:textColor="@color/orange"/>
+
+
 
             </LinearLayout>
 
@@ -120,6 +134,8 @@
             </LinearLayout>
 
         </LinearLayout>
+
+
         <ImageView
             android:id="@+id/timer"
             android:layout_marginTop="40dp"

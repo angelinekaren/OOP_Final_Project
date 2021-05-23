@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Bundle;
@@ -55,9 +56,9 @@ public class LoginActivity extends AppCompatActivity {
     CircularProgressButton loginButton;
     TextView textViewRegister, forgetPassText;
     ProgressBar progressBar;
-
+    public static final String TAG = "LOGIN";
     private FirebaseAuth mAuth;
-    FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,49 +75,53 @@ public class LoginActivity extends AppCompatActivity {
         forgetPassText = findViewById(R.id.forgotPassword);
 
         mAuth = FirebaseAuth.getInstance();
-        //checking if user is logged in
-        if (mAuth.getCurrentUser() != null) {
-            updateUI(mAuth.getCurrentUser());
-        }
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                if(user!=null){
-//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//                else {
-//                    loginButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            loginUser();
-//                        }
-//                    });
-//                }
-//            }
-//        };
+        FirebaseUser user = mAuth.getCurrentUser();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (user != null) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Log.d(TAG,"AuthStateChanged:Logout");
+                }
+
+            }
+        };
+        // LogInButton.setOnClickListener((View.OnClickListener) this);
+        //RegisterButton.setOnClickListener((View.OnClickListener) this);
+        //Adding click listener to log in button.
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+
+                // Calling EditText is empty or no method.
                 loginUser();
+
+
             }
         });
+
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //removeAuthSateListner is used  in onStart function just for checking purposes,it helps in logging you out.
+        mAuth.removeAuthStateListener(mAuthListener);
+
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        if(mAuthListener != null)
-//            mAuth.removeAuthStateListener(mAuthListener);
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+
+    }
 
 
     private void loginUser(){
@@ -142,8 +147,8 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        updateUI(user);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
                         progressBar.setVisibility(View.GONE);
                     }
                     else {
@@ -197,43 +202,6 @@ public class LoginActivity extends AppCompatActivity {
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.stay);
     }
-
-//    public void updateUI(FirebaseUser account){
-//
-//        if(account != null){
-//            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-//
-//        }else {
-//            Toast.makeText(LoginActivity.this, "Login failed! Try again!", Toast.LENGTH_SHORT).show();
-//        }
-//
-//    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            updateUI(currentUser);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            updateUI(currentUser);
-        }
-    }
-
-    public void updateUI(FirebaseUser currentUser) {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
-
 
 }
 

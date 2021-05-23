@@ -3,6 +3,7 @@ package com.example.plannerproject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.renderscript.RenderScript;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,6 +26,8 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -33,6 +37,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,9 +64,13 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
     public static final String TAG = "addNewTask";
     private EditText getTaskInput;
     private TextView getSetDate;
+    private TextView getSetPriority;
     private TextView getSetClock;
     private Calendar calendar;
     private Button getSaveButton;
+    private int selectedButtonId;
+    private RadioButton selectedRadioButton;
+    private ImageView getCalBtn, getClockBtn, getFlagBtn;
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private Context context;
@@ -69,6 +78,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
     private String getTime;
     private String dbDate, dbTask;
     private String id;
+    private String myPriority;
     private String taskId;
     private boolean isUpdated = false;
 
@@ -90,6 +100,11 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
         getSetDate = view.findViewById(R.id.setDate);
         getSetClock = view.findViewById(R.id.setTime);
         getSaveButton = view.findViewById(R.id.saveButton);
+        getCalBtn = view.findViewById(R.id.calendar_button);
+        getClockBtn = view.findViewById(R.id.clock_button);
+        getFlagBtn = view.findViewById(R.id.flag_button);
+
+        getSetPriority = view.findViewById(R.id.setPriority);
 
         calendar = Calendar.getInstance();
 
@@ -127,16 +142,16 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
 
         updatedTask();
 
-        getSetDate.setOnClickListener(this);
+        getCalBtn.setOnClickListener(this);
         getSaveButton.setOnClickListener(this);
-        getSetClock.setOnClickListener(this);
-
+        getClockBtn.setOnClickListener(this);
+        getFlagBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case(R.id.setDate): {
+            case(R.id.calendar_button): {
                 viewCalendar();
                 break;
             }
@@ -144,8 +159,12 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
                 setNewTask();
                 break;
             }
-            case(R.id.setTime) : {
+            case(R.id.clock_button) : {
                 viewTime();
+                break;
+            }
+            case(R.id.flag_button) : {
+                setPriority();
                 break;
             }
         }
@@ -159,10 +178,12 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
             taskId = bundle.getString("id");
             String date = bundle.getString("dateTime");
             String clock = bundle.getString("clockTime");
+            String priority = bundle.getString("priority");
 
             getSetClock.setText(clock);
             getSetDate.setText(date);
             getTaskInput.setText(task);
+            getSetPriority.setText(priority);
 
             if (task.length() > 0) {
                 getSaveButton.setEnabled(false);
@@ -171,6 +192,8 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
 
         }
     }
+
+
 
     private void setNewTask() {
         String taskName = getTaskInput.getText().toString();
@@ -182,6 +205,8 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
             result.put("task", taskName);
             result.put("dateTime", getDate);
             result.put("clockTime", getTime);
+            result.put("priority", myPriority);
+
 
             ref.child(taskId).updateChildren(result)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -204,7 +229,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
                 Toast.makeText(context, "Required to fill in new task!", Toast.LENGTH_SHORT).show();
             }
             else {
-                TaskModel taskModel = new TaskModel(id, taskName, getDate, getTime, 0);
+                TaskModel taskModel = new TaskModel(id, taskName, getDate, getTime, 0, myPriority);
 
                 ref.child(id).setValue(taskModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -226,6 +251,32 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
 
         }
         dismiss();
+    }
+
+    private void setPriority() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_set_priority, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setView(dialogView).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
+                int choose = radioGroup.getCheckedRadioButtonId();
+                selectedRadioButton = dialogView.findViewById(choose);
+                myPriority = selectedRadioButton.getText().toString();
+                getSetPriority.setText(myPriority);
+                dialog.cancel();
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void viewCalendar() {
@@ -303,7 +354,6 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
         }
 
     }
-
 }
 
 

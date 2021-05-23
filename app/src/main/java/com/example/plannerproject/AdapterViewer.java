@@ -3,6 +3,8 @@ package com.example.plannerproject;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -88,6 +92,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         bundle.putString("clockTime", taskModel.getClockTime());
         bundle.putString("task", taskModel.getTask());
         bundle.putString("id", taskModel.getTaskId());
+        bundle.putString("priority", taskModel.getPriority());
 
 
         AddNewTask addNewTask = new AddNewTask();
@@ -123,6 +128,9 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         holder.setTaskTitle(taskModel.getTask());
         holder.setClock(taskModel.getClockTime());
         holder.checkStatus(taskModel.getStatus());
+        holder.checkPriority(taskModel.getPriority());
+
+
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -130,7 +138,6 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
                 if (isChecked) {
                     HashMap<String, Object> result = new HashMap<>();
                     result.put("status", 1);
-
                     ref.child(taskModel.getTaskId()).updateChildren(result);
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -142,19 +149,16 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
                                     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                                     DatabaseReference reference = firebaseDatabase.getReference().child("Completed").child(userUid);
 
+                                    deleteTask(position);
+
                                     ref.child(taskModel.getTaskId()).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             reference.child(taskModel.getTaskId()).setValue(snapshot.getValue(), new DatabaseReference.CompletionListener() {
                                                 @Override
                                                 public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                    deleteTask(position);
-                                                    if (error != null) {
-                                                        Toast.makeText(getContext(), "Successfully moved to completed task!", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    else {
-                                                        Toast.makeText(getContext(), "Process failed!", Toast.LENGTH_SHORT).show();
-                                                    }
+                                                    Toast.makeText(getContext(), "Successfully moved to completed task!", Toast.LENGTH_SHORT).show();
+
                                                 }
                                             });
                                         }
@@ -194,6 +198,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View view;
         TextView getTaskTitle;
+        ImageView getFlagPriority;
         TextView getDate;
         TextView getClock;
         CheckBox checkBox;
@@ -209,6 +214,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
             getClock = view.findViewById(R.id.due_time);
             checkBox = view.findViewById(R.id.materialCheckBox);
             timer = view.findViewById(R.id.timer);
+            getFlagPriority = view.findViewById(R.id.flagPriority);
             this.onTaskListener = onTaskListener;
 
             // Refer to the interface View.OnClickListener
@@ -230,6 +236,21 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
 
         public void checkStatus(int status) {
             checkBox.setChecked(toBoolean(status));
+        }
+
+        public void checkPriority(String priority) {
+            if (priority == null) {
+                return;
+            }
+            if(priority.equals("HIGH")) {
+                getFlagPriority.setColorFilter(Color.RED);
+            }
+            if(priority.equals("MEDIUM")) {
+                getFlagPriority.setColorFilter(Color.YELLOW);
+            }
+            if(priority.equals("LOW")) {
+                getFlagPriority.setColorFilter(Color.GREEN);
+            }
         }
 
         public boolean toBoolean(int status) {

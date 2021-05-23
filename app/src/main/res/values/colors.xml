@@ -16,6 +16,7 @@
     <color name="stated_checked">#d7d7d9</color>
     <color name="colorTime">#1d1942</color>
     <color name="orange">#faa628</color>
+    <color name="yellow">#ffd000</color>
 
     <!-- Circle Color Select -->
     <color name="blueCircle">#4287f5</color>

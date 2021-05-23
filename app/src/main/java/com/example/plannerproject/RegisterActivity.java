@@ -56,14 +56,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser()!=null){
-            finish();
-            Toast.makeText(RegisterActivity.this, "User existed", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, LoginActivity.class));
-        }
-        else {
-            registerButton.setOnClickListener(this);
-        }
+        registerButton.setOnClickListener(this);
         textViewLogin.setOnClickListener(this);
 
     }
@@ -76,6 +69,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.register_background));
         }
+    }
+
+    public void loginClicked(View view) {
+        // Command to move from this page to LoginActivity
+        // Declare Intent object to provides runtime binding between two activities
+        // Intent(context, class)
+        // context (subclass of context): current activity class, Class: Activity class to start
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+
+        // Transition animation
+        // overridePendingTransition(int enterAnim, int ExitAnim)
+        // This function corresponds to the two animation, which in this case: slide_in_left and slide_out_right
+        // It is to slide left to LoginActivity page and slide out from RegisterActivity page
+        overridePendingTransition(R.anim.slide_in_left,  android.R.anim.slide_out_right);
     }
 
     @Override
@@ -106,7 +115,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void registerUser() {
         fullname = textInputEditTextFullname.getText().toString().trim();
         email = textInputEditTextEmail.getText().toString().trim();
-        password = textInputEditTextPassword.getText().toString().trim();
 
 
         if(TextUtils.isEmpty(fullname)) {
@@ -143,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-                    User user = new User(fullname, email, password);
+                    User user = new User(fullname, email);
 
                     userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     // Provide the name of the collections in getReference()

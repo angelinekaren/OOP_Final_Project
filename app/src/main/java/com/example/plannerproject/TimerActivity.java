@@ -22,7 +22,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TimerActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView getTaskName, getDate;
+    private TextView getTaskName, getDate, getClock;
+    private ImageView getCalImg, getClockImg;
     private static TextView getTime;
     private Button getStartButton, getResetButton;
     private static CountDownTimer countDownTimer;
@@ -43,9 +44,18 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
 
         getTaskName = findViewById(R.id.taskName);
         getDate = findViewById(R.id.timeTask);
+        getClock = findViewById(R.id.clockTask);
+        getCalImg = findViewById(R.id.calendarImg);
+        getClockImg = findViewById(R.id.clockImg);
+
+        if (getIntent().getStringExtra("dateTime") == null && getIntent().getStringExtra("clockTime") == null) {
+            getCalImg.setVisibility(View.INVISIBLE);
+            getClockImg.setVisibility(View.INVISIBLE);
+        }
 
         getTaskName.setText(getIntent().getStringExtra("task"));
         getDate.setText(getIntent().getStringExtra("dateTime"));
+        getClock.setText(getIntent().getStringExtra("clockTime"));
 
         getTime = findViewById(R.id.countdownTimer);
         getStartButton = findViewById(R.id.startBtn);

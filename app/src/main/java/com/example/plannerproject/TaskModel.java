@@ -3,20 +3,20 @@ package com.example.plannerproject;
 import java.util.Map;
 
 public class TaskModel {
-    private String task, dateTime, clockTime, taskId;
+    private String task, dateTime, clockTime, taskId, priority;
     private int status;
 
     public TaskModel() {}
 
-    public TaskModel(String taskId, String task, String dateTime, String clockTime, int status) {
+    public TaskModel(String taskId, String task, String dateTime, String clockTime, int status, String priority) {
         this.taskId = taskId;
         this.task = task;
         this.dateTime = dateTime;
         this.clockTime = clockTime;
         this.status = status;
+        this.priority = priority;
 
     }
-
     public String getTaskId() {
         return taskId;
     }
@@ -43,6 +43,14 @@ public class TaskModel {
 
     public String getClockTime() {
         return clockTime;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getPriority() {
+        return priority;
     }
 
     public void setClockTime(String clockTime) {

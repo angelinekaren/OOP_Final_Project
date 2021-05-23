@@ -1,6 +1,7 @@
 package com.example.plannerproject;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +50,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
         holder.setDate(taskModel.getDateTime());
         holder.setTask(taskModel.getTask());
         holder.setClock(taskModel.getClockTime());
+        holder.checkPriority(taskModel.getPriority());
     }
 
     @Override
@@ -91,6 +94,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
         TextView getDate;
         TextView getTask;
         TextView getClock;
+        ImageView getFlag;
 
         public CompletedViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -99,6 +103,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
             getTask = view.findViewById(R.id.taskCompleted);
             getDate = view.findViewById(R.id.dateCompleted);
             getClock = view.findViewById(R.id.timeCompleted);
+            getFlag = view.findViewById(R.id.flagPriorityCompleted);
 
         }
 
@@ -112,6 +117,21 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
 
         public void setClock(String clock) {
             getClock.setText(clock);
+        }
+
+        public void checkPriority(String priority) {
+            if (priority == null) {
+                return;
+            }
+            if(priority.equals("HIGH")) {
+                getFlag.setColorFilter(Color.RED);
+            }
+            if(priority.equals("MEDIUM")) {
+                getFlag.setColorFilter(Color.YELLOW);
+            }
+            if(priority.equals("LOW")) {
+                getFlag.setColorFilter(Color.GREEN);
+            }
         }
     }
 }
