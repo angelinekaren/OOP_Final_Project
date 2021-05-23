@@ -9,6 +9,19 @@
     </group>
 
     <item
+        android:title="Tasks">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/completed_task"
+                    android:icon="@drawable/ic_check"
+                    android:title="Completed"/>
+            </group>
+        </menu>
+    </item>
+
+
+    <item
         android:title="Profile">
         <menu>
             <group android:checkableBehavior="single">

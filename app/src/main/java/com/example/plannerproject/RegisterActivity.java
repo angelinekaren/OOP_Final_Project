@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     private DatabaseReference database;
-    private String fullname, email, password;
+    private String fullname, email, password, userUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,12 +143,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-                    User user = new User(fullname, email);
+                    User user = new User(fullname, email, password);
 
+                    userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     // Provide the name of the collections in getReference()
                     // .child(FirebaseAuth.getInstance().getCurrentUser().getUid()):
                     // return the user registered ID and set the additional object to the registered user
-                    FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    FirebaseDatabase.getInstance().getReference("Users").child(userUid)
                             .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

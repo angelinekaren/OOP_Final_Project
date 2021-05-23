@@ -1,25 +1,26 @@
 package com.example.plannerproject;
 
-import android.content.ClipData;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.widget.AbsListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,8 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements OnDialogCloseListener, AdapterViewer.OnTaskListener {
@@ -40,6 +41,7 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private AdapterViewer adapter;
+
 
 
 
@@ -68,17 +70,16 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
             }
         });
 
+        hideFab();
+
         taskModelList = new ArrayList<>();
         showData();
 
-        adapter = new AdapterViewer((MainActivity) getActivity(), taskModelList, this::onTaskListener );
+        adapter = new AdapterViewer((MainActivity) getActivity(), taskModelList, this::onTaskListener);
         recyclerView.setAdapter(adapter);
-
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelper(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
-
 
         return v;
     }
@@ -102,6 +103,28 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
         });
     }
 
+    private void hideFab() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                {
+                    floatingActionButton.show();
+                }
+
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 ||dy<0 && floatingActionButton.isShown())
+                {
+                    floatingActionButton.hide();
+                }
+            }
+        });
+    }
+
     @Override
     public void onDialogClose(DialogInterface dialogInterface) {
         taskModelList.clear();
@@ -116,6 +139,7 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
         Intent intent = new Intent(getActivity(), TimerActivity.class);
         intent.putExtra("task", taskModel.getTask());
         intent.putExtra("dateTime", taskModel.getDateTime());
+        intent.putExtra("clockTime", taskModel.getClockTime());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

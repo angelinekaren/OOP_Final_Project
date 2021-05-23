@@ -23,11 +23,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:orientation="horizontal"
         android:drawableRight="@drawable/ic_calendar"
         android:drawablePadding="8dp"
         android:text="Set Date"
         android:textColor="@color/colorTime"
         android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTaskTextInput" />
+
+    <TextView
+        android:id="@+id/setTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="140dp"
+        android:drawableRight="@drawable/ic_time"
+        android:drawablePadding="8dp"
+        android:text="Set Time"
+        android:textColor="@color/colorTime"
+        android:textSize="16sp"
+        app:layout_constraintRight_toRightOf="@+id/setDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addTaskTextInput" />
 
@@ -41,6 +56,10 @@
         android:textColor="@color/whiteTextColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addTaskTextInput" />
+
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.vishnusivadas.advanced_httpurlconnection.PutData;
 
 import org.json.JSONObject;
@@ -67,6 +74,10 @@ public class LoginActivity extends AppCompatActivity {
         forgetPassText = findViewById(R.id.forgotPassword);
 
         mAuth = FirebaseAuth.getInstance();
+        //checking if user is logged in
+        if (mAuth.getCurrentUser() != null) {
+            updateUI(mAuth.getCurrentUser());
+        }
 //        mAuthListener = new FirebaseAuth.AuthStateListener() {
 //            @Override
 //            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -130,14 +141,13 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         FirebaseUser user = mAuth.getCurrentUser();
                         updateUI(user);
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
                         progressBar.setVisibility(View.GONE);
                     }
                     else {
-                        updateUI(null);
+                        Toast.makeText(LoginActivity.this, "Login failed! Try again!", Toast.LENGTH_SHORT).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 }
@@ -188,15 +198,40 @@ public class LoginActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.stay);
     }
 
-    public void updateUI(FirebaseUser account){
+//    public void updateUI(FirebaseUser account){
+//
+//        if(account != null){
+//            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+//
+//        }else {
+//            Toast.makeText(LoginActivity.this, "Login failed! Try again!", Toast.LENGTH_SHORT).show();
+//        }
+//
+//    }
 
-        if(account != null){
-            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-
-        }else {
-            Toast.makeText(LoginActivity.this, "Login failed! Try again!", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            updateUI(currentUser);
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            updateUI(currentUser);
+        }
+    }
+
+    public void updateUI(FirebaseUser currentUser) {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
     }
 
 

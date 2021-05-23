@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +48,7 @@ import java.util.Objects;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements View.OnClickListener {
     private TextView getEmail;
     private TextView getFullname;
     private ProgressBar progressBar;
@@ -55,6 +56,7 @@ public class ProfileFragment extends Fragment {
     DatabaseReference ref;
     ProgressDialog pd;
     private String oldPassword, newPassword, newName, deletePassword;
+    private String email, fullname;
     private TextInputEditText getInputOldPassword, getInputNewPassword, getInputNewName, getDeletePassword;
     AlertDialog dialog;
 
@@ -80,50 +82,54 @@ public class ProfileFragment extends Fragment {
         getDeleteButton = v.findViewById(R.id.deleteAccountButton);
         progressBar = v.findViewById(R.id.progressBarAccount);
 
-        updatePasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showEditProfileDialog();
-            }
-        });
+        updatePasswordButton.setOnClickListener(this);
+        getDeleteButton.setOnClickListener(this);
 
-        getDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteAccountDialog();
-            }
-        });
+
         return v;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case (R.id.updatePassword): {
+                showEditProfileDialog();
+                break;
+            }
+            case (R.id.deleteAccountButton): {
+                deleteAccountDialog();
+                break;
+            }
+
+        }
+
     }
 
     public void profileDetails() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String email = user.getEmail();
 
+        if (user!= null) {
             ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
-
-            getEmail.setText("Email: "+ email);
 
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     User user = snapshot.getValue(User.class);
 
-                    getFullname.setText("Fullname: " + user.getFullname());
+                    getEmail.setText(String.format("Email: %s", user.getEmail()));
+                    getFullname.setText(String.format("Fullname: %s", user.getFullname()));
 
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    System.out.println(error.toString());
+
                 }
             });
         }
     }
 
     private void deleteAccountDialog() {
-
         // Update password dialog (Old Password, New Password)
 
         // Inflate layout for dialog
@@ -148,7 +154,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
     }
 
     private void deleteUserAccount() {
@@ -181,7 +186,7 @@ public class ProfileFragment extends Fragment {
                                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
+                                        for (DataSnapshot appleSnapshot : snapshot.getChildren()) {
                                             appleSnapshot.getRef().removeValue();
                                         }
                                     }
@@ -207,13 +212,13 @@ public class ProfileFragment extends Fragment {
                         });
             }
         })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                Toast.makeText(getActivity(), "Failed to authenticate", Toast.LENGTH_SHORT).show();
-            }
-        });
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        pd.dismiss();
+                        Toast.makeText(getActivity(), "Failed to authenticate", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void showEditProfileDialog() {
@@ -228,12 +233,11 @@ public class ProfileFragment extends Fragment {
 
         // Set items to dialog (options)
         builder.setItems(options, ((dialog, which) -> {
-            if(which==0) {
+            if (which == 0) {
                 // Edit fullname clicked
                 pd.setMessage("Editing Fullname");
                 showFullnameUpdateDialog();
-            }
-            else if(which==1) {
+            } else if (which == 1) {
                 // Update Password clicked
                 pd.setMessage("Updating Password");
                 showUpdatePasswordDialog();
@@ -324,13 +328,13 @@ public class ProfileFragment extends Fragment {
 
             }
         })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                Toast.makeText(getActivity(), "Failed to authenticate", Toast.LENGTH_SHORT).show();
-            }
-        });
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        pd.dismiss();
+                        Toast.makeText(getActivity(), "Failed to authenticate", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void showFullnameUpdateDialog() {
@@ -355,11 +359,12 @@ public class ProfileFragment extends Fragment {
                 updateUserName();
             }
         });
+
     }
 
     private void updateUserName() {
         // Set validation to data
-        newName =getInputNewName.getText().toString().trim();
+        newName = getInputNewName.getText().toString().trim();
 
         if (TextUtils.isEmpty(newName)) {
             Toast.makeText(getActivity(), "Field is required", Toast.LENGTH_SHORT).show();
@@ -394,6 +399,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
     }
+
 
 
 }

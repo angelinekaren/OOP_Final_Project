@@ -4,10 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -40,6 +45,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mFirebaseAuth;
     private ProfileFragment profileFragment;
     private HomeFragment homeFragment;
+    private CompletedFragment completedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         homeFragment = new HomeFragment();
         profileFragment = new ProfileFragment();
+        completedFragment = new CompletedFragment();
 
         // Call function
         animateNavigationDrawer();
@@ -93,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             setFragment(homeFragment);
         }
-
 
     }
 
@@ -124,6 +131,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case (R.id.home):
                 navigationView.setCheckedItem(R.id.home);
                 setFragment(homeFragment);
+                break;
+            case(R.id.completed_task):
+                navigationView.setCheckedItem(R.id.completed_task);
+                setFragment(completedFragment);
                 break;
             case (R.id.profile):
                 navigationView.setCheckedItem(R.id.profile);
@@ -186,5 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
     }
+
+
 
 }

@@ -1,9 +1,15 @@
 package com.example.plannerproject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -19,10 +25,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -41,19 +49,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddNewTask extends BottomSheetDialogFragment {
+public class AddNewTask extends BottomSheetDialogFragment implements View.OnClickListener {
     public static final String TAG = "addNewTask";
     private EditText getTaskInput;
     private TextView getSetDate;
+    private TextView getSetClock;
+    private Calendar calendar;
     private Button getSaveButton;
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private Context context;
     private String getDate;
+    private String getTime;
     private String dbDate, dbTask;
     private String id;
     private String taskId;
@@ -75,7 +88,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
         getTaskInput = view.findViewById(R.id.addTaskTextInput);
         getSetDate = view.findViewById(R.id.setDate);
+        getSetClock = view.findViewById(R.id.setTime);
         getSaveButton = view.findViewById(R.id.saveButton);
+
+        calendar = Calendar.getInstance();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -83,7 +99,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().child("Tasks").child(userUid);
-
 
         getTaskInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -112,20 +127,28 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
         updatedTask();
 
-        getSetDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        getSetDate.setOnClickListener(this);
+        getSaveButton.setOnClickListener(this);
+        getSetClock.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case(R.id.setDate): {
                 viewCalendar();
+                break;
             }
-        });
-
-        getSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            case(R.id.saveButton) : {
                 setNewTask();
+                break;
             }
-        });
-
+            case(R.id.setTime) : {
+                viewTime();
+                break;
+            }
+        }
     }
 
     private void updatedTask() {
@@ -135,7 +158,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
             String task = bundle.getString("task");
             taskId = bundle.getString("id");
             String date = bundle.getString("dateTime");
+            String clock = bundle.getString("clockTime");
 
+            getSetClock.setText(clock);
             getSetDate.setText(date);
             getTaskInput.setText(task);
 
@@ -148,14 +173,15 @@ public class AddNewTask extends BottomSheetDialogFragment {
     }
 
     private void setNewTask() {
-        String task = getTaskInput.getText().toString();
+        String taskName = getTaskInput.getText().toString();
         id = ref.push().getKey();
 
         if (isUpdated) {
 
             HashMap<String, Object> result = new HashMap<>();
-            result.put("task", task);
+            result.put("task", taskName);
             result.put("dateTime", getDate);
+            result.put("clockTime", getTime);
 
             ref.child(taskId).updateChildren(result)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -174,11 +200,11 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     });
         }
         else {
-            if (task.isEmpty()) {
+            if (taskName.isEmpty()) {
                 Toast.makeText(context, "Required to fill in new task!", Toast.LENGTH_SHORT).show();
             }
             else {
-                TaskModel taskModel = new TaskModel(id, task, getDate, 0);
+                TaskModel taskModel = new TaskModel(id, taskName, getDate, getTime, 0);
 
                 ref.child(id).setValue(taskModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -203,7 +229,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
     }
 
     private void viewCalendar() {
-        Calendar calendar = Calendar.getInstance();
 
         int year, month, day;
 
@@ -219,9 +244,48 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 getSetDate.setText(getDate);
             }
         }, year, month, day);
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
         datePickerDialog.show();
     }
+
+    private void viewTime() {
+        final long date = System.currentTimeMillis();
+
+        SimpleDateFormat timeSdf = new SimpleDateFormat("hh : mm a"); // 12:08 PM
+        String timeString = timeSdf.format(date);
+        getSetClock.setText(timeString);
+
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        int hour, minute;
+
+        hour = calendar.get(Calendar.HOUR_OF_DAY);
+        minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                @SuppressLint("DefaultLocale") String minTime = String.format("%02d", minute);
+                if (hourOfDay >= 0 && hourOfDay < 12) {
+                    getTime = hourOfDay + " : " + minTime + " AM";
+                } else {
+                    if (hourOfDay != 12) {
+                        hourOfDay = hourOfDay - 12;
+                    }
+                    getTime = hourOfDay + " : " + minTime + " PM";
+                }
+                getSetClock.setText(getTime);
+                calendar.set(Calendar.HOUR, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+            }
+        }, hour, minute, false);
+
+        timePickerDialog.show();
+    }
+
+
 
     @Override
     public void onAttach(@NonNull android.content.Context context) {

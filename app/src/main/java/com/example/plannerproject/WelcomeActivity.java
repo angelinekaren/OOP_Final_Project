@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
     CircularProgressButton loginButton, signUpButton;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
@@ -59,21 +59,23 @@ public class WelcomeActivity extends AppCompatActivity {
             System.out.println("user not available");
         }
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginClicked();
-            }
-        });
+        signUpButton.setOnClickListener(this);
+        loginButton.setOnClickListener(this);
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case(R.id.signUpButton): {
                 signupClicked();
+                break;
             }
-        });
-
-
+            case(R.id.loginButton) : {
+                loginClicked();
+                break;
+            }
+        }
     }
 
     public void changeStatusBar() {
@@ -98,4 +100,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         overridePendingTransition(R.anim.slide_in_right,  R.anim.stay);
     }
+
+
 }

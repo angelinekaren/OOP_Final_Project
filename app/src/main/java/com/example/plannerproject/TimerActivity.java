@@ -26,12 +26,13 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     private static TextView getTime;
     private Button getStartButton, getResetButton;
     private static CountDownTimer countDownTimer;
+    private long endTime;
+    private boolean timerRun;
     private static long startTimeMillis;
     private static long timeLeftMillis;
     private int isClicked = 0;
     private FloatingActionButton addTimeButton;
     private ImageView getBackButton, getAnchor;
-    private Animation animation;
     private ObjectAnimator anim;
 
     @Override
@@ -70,6 +71,8 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void startTimer() {
+        endTime = System.currentTimeMillis() + timeLeftMillis;
+
         isClicked += 1;
         if (isClicked == 1) {
             anim.start();
@@ -87,9 +90,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onFinish() {
                 countDownTimer = null;
+                timerRun = false;
                 getStartButton.setText("Start");
             }
         }.start();
+        timerRun = true;
     }
 
 
@@ -98,6 +103,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
             anim.pause();
             countDownTimer.cancel();
             countDownTimer = null;
+            timerRun = false;
         }
     }
 
@@ -107,6 +113,41 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
         updateCountdown();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("startTimeMillis", startTimeMillis);
+        editor.putLong("millisLeft", timeLeftMillis);
+        editor.putBoolean("timerRun", timerRun);
+        editor.putLong("endTime", endTime);
+        editor.apply();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        startTimeMillis = prefs.getLong("startTimeMillis", 0);
+        timerRun = prefs.getBoolean("timerRun", false);
+        updateCountdown();
+        if (timerRun) {
+            endTime = prefs.getLong("endTime", 0);
+            timeLeftMillis = endTime - System.currentTimeMillis();
+            if (timeLeftMillis < 0) {
+                timeLeftMillis = 0;
+                timerRun = false;
+                updateCountdown();
+            } else {
+                startTimer();
+            }
+        }
+    }
+
     private static void updateCountdown() {
         int hours = (int) (timeLeftMillis / 1000) / 3600;
         int minutes = (int) ((timeLeftMillis / 1000) % 3600) / 60;
@@ -114,7 +155,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
 
         String timeLeft;
         timeLeft = String.format(Locale.getDefault(),
-                    "%02d:%02d:%02d", hours, minutes, seconds);
+                "%02d:%02d:%02d", hours, minutes, seconds);
         getTime.setText(timeLeft);
     }
 
@@ -138,7 +179,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch(v.getId()) {
             case (R.id.startBtn): {
-                if (countDownTimer == null) {
+                if (countDownTimer == null && !timerRun) {
                     startTimer(); //start countdown
                     getStartButton.setText("Pause"); //Change Text
                 } else {

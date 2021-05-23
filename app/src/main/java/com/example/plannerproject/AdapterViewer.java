@@ -1,6 +1,8 @@
 package com.example.plannerproject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +11,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,8 +30,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHolder> {
 
@@ -75,6 +85,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
 
         Bundle bundle = new Bundle();
         bundle.putString("dateTime", taskModel.getDateTime());
+        bundle.putString("clockTime", taskModel.getClockTime());
         bundle.putString("task", taskModel.getTask());
         bundle.putString("id", taskModel.getTaskId());
 
@@ -109,7 +120,8 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         TaskModel taskModel = taskModelList.get(position);
 
         holder.setDate(taskModel.getDateTime());
-        holder.checkBox.setText(taskModel.getTask());
+        holder.setTaskTitle(taskModel.getTask());
+        holder.setClock(taskModel.getClockTime());
         holder.checkStatus(taskModel.getStatus());
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -120,6 +132,48 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
                     result.put("status", 1);
 
                     ref.child(taskModel.getTaskId()).updateChildren(result);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                    builder.setMessage("Is it completed?").setTitle("Completed Task")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                    DatabaseReference reference = firebaseDatabase.getReference().child("Completed").child(userUid);
+
+                                    ref.child(taskModel.getTaskId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            reference.child(taskModel.getTaskId()).setValue(snapshot.getValue(), new DatabaseReference.CompletionListener() {
+                                                @Override
+                                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                    deleteTask(position);
+                                                    if (error != null) {
+                                                        Toast.makeText(getContext(), "Successfully moved to completed task!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else {
+                                                        Toast.makeText(getContext(), "Process failed!", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    notifyItemChanged(position);
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
                 else {
                     HashMap<String, Object> resultFalse = new HashMap<>();
@@ -131,6 +185,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         });
     }
 
+
     @Override
     public int getItemCount() {
         return taskModelList.size();
@@ -138,7 +193,9 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View view;
+        TextView getTaskTitle;
         TextView getDate;
+        TextView getClock;
         CheckBox checkBox;
         ImageView timer;
         OnTaskListener onTaskListener;
@@ -147,7 +204,9 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
             super(itemView);
             view = itemView;
 
+            getTaskTitle = view.findViewById(R.id.taskTitle);
             getDate = view.findViewById(R.id.due_date);
+            getClock = view.findViewById(R.id.due_time);
             checkBox = view.findViewById(R.id.materialCheckBox);
             timer = view.findViewById(R.id.timer);
             this.onTaskListener = onTaskListener;
@@ -157,8 +216,16 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
 
         }
 
+        public void setTaskTitle(String taskTitle) {
+            getTaskTitle.setText(taskTitle);
+        }
+
         public void setDate(String date) {
             getDate.setText(date);
+        }
+
+        public void setClock(String clock) {
+            getClock.setText(clock);
         }
 
         public void checkStatus(int status) {
@@ -178,5 +245,4 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
     public interface OnTaskListener {
         void onTaskListener(int position);
     }
-
 }
