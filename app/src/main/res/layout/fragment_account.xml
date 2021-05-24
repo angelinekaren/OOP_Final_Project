@@ -55,16 +55,6 @@
             android:background="@drawable/underline"
             android:text="Email"/>
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/progressBarAccount"
-            android:layout_marginTop="30dp"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userEmail"/>
 
         <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
             android:id="@+id/updatePassword"

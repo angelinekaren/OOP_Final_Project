@@ -5,10 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
@@ -16,51 +13,47 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.vishnusivadas.advanced_httpurlconnection.PutData;
-
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
+// RegisterActivity class
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
     private TextInputEditText textInputEditTextFullname, textInputEditTextEmail, textInputEditTextPassword;
-    private CircularProgressButton registerButton;
-    private TextView textViewLogin;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
-    private DatabaseReference database;
-    private String fullname, email, password, userUid;
 
+    // onCreate(): initialize activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        // Call changeStatusBar() function
         changeStatusBar();
 
         // Initialization
         textInputEditTextFullname = findViewById(R.id.fullname);
         textInputEditTextEmail = findViewById(R.id.email);
         textInputEditTextPassword = findViewById(R.id.password);
-        registerButton = findViewById(R.id.registerButton);
-        textViewLogin = findViewById(R.id.loginText);
+        CircularProgressButton registerButton = findViewById(R.id.registerButton);
+        TextView textViewLogin = findViewById(R.id.loginText);
         progressBar = findViewById(R.id.progress);
 
+        // Initialize FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
 
+        // Set onClick listener
         registerButton.setOnClickListener(this);
         textViewLogin.setOnClickListener(this);
-
     }
 
+    // Function to change the status bar
     public void changeStatusBar() {
         // Check if it's running on Android 5.0 or higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -106,91 +99,112 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 overridePendingTransition(R.anim.slide_in_left,  android.R.anim.slide_out_right);
                 break;
             case (R.id.registerButton):
+                // Call registerUser() function
                 registerUser();
                 break;
 
         }
     }
 
+    // Function to register user
     private void registerUser() {
-        fullname = textInputEditTextFullname.getText().toString().trim();
-        email = textInputEditTextEmail.getText().toString().trim();
+        // Get the inputted fullname, email, and password
+        String fullname = textInputEditTextFullname.getText().toString().trim();
+        String email = textInputEditTextEmail.getText().toString().trim();
+        String password = textInputEditTextPassword.getText().toString().trim();
 
-
+        // If fullname inputs are empty, set error
         if(TextUtils.isEmpty(fullname)) {
             textInputEditTextFullname.setError("Field is required!");
             textInputEditTextFullname.requestFocus();
             return;
         }
+        // If email inputs are empty, set error
         if(TextUtils.isEmpty(email)) {
             textInputEditTextEmail.setError("Field is required!");
             textInputEditTextEmail.requestFocus();
             return;
         }
-
+        // If the inpputed email address is not valid, set error
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             textInputEditTextEmail.setError("Please provide valid email address!");
             textInputEditTextEmail.requestFocus();
             return;
         }
-
+        // If password inputs are empty, set error
         if (TextUtils.isEmpty(password)){
             textInputEditTextPassword.setError("Field is required!");
             textInputEditTextPassword.requestFocus();
             return;
         }
-
+        // If password input is less than 8 characters, set error
         if (password.length() < 8) {
             textInputEditTextPassword.setError("Required minimum password length should be 8 characters!");
             textInputEditTextPassword.requestFocus();
             return;
         }
-
+        // Set progress bar to visible
         progressBar.setVisibility(View.VISIBLE);
+        // Create user with the inputted email and password
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                // If task is successful,
                 if(task.isSuccessful()) {
+                    // Create user model
                     User user = new User(fullname, email);
 
-                    userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    // Get the current looged in user Uid
+                    String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
                     // Provide the name of the collections in getReference()
                     // .child(FirebaseAuth.getInstance().getCurrentUser().getUid()):
                     // return the user registered ID and set the additional object to the registered user
+                    // Store it to the database
                     FirebaseDatabase.getInstance().getReference("Users").child(userUid)
                             .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            // If task is successful,
                             if (task.isSuccessful()) {
+                                // Get the current logged in user
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                // Call updateUI() function and pass in user as the argument
                                 updateUI(user);
+                                // Sign the user out
                                 mAuth.signOut();
+                                // Invoke the LoginActivity page
                                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
+                                // Set progress bar to gone
                                 progressBar.setVisibility(View.GONE);
                             } else {
-                                Toast.makeText(RegisterActivity.this, "Registration failed! Try again!", Toast.LENGTH_SHORT).show();
+                                // Call updateUI() function and pass null as the argument
                                 updateUI(null);
+                                // Set progress bar to gone
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
                     });
                 } else {
+                    // Create a toast message
                     Toast.makeText(RegisterActivity.this, "Registration failed! Try again!", Toast.LENGTH_SHORT).show();
+                    // Set progress bar to gone
                     progressBar.setVisibility(View.GONE);
                 }
             }
         });
     }
 
+    // Function to updateUI
     public void updateUI(FirebaseUser account){
+        // If the user is successfully signed up, create successful toast message
         if(account != null){
             Toast.makeText(RegisterActivity.this, "User registration is successful", Toast.LENGTH_SHORT).show();
-
+        // Else, create failed toast message
         }else {
             Toast.makeText(RegisterActivity.this, "Registration failed! Try again!", Toast.LENGTH_SHORT).show();
         }
-
     }
 }
