@@ -114,6 +114,4 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         // slide_in_right from welcome page to register page, and stay in register page
         overridePendingTransition(R.anim.slide_in_right,  R.anim.stay);
     }
-
-
 }

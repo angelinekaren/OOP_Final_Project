@@ -97,28 +97,25 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         // Get the current logged in user email
         String email = user.getEmail();
 
-        // Check if user is not null
-        if (user!= null) {
-            // Set text the email
-            getEmail.setText(String.format("Email: %s", email));
+        // Set text the email
+        getEmail.setText(String.format("Email: %s", email));
 
-            // ValueEventListener to a list of data will return the entire list of data as a single DataSnapshot,
-            // which you can then loop over to access individual children
-            // Create a value event listener to the database reference
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    // Get value from user class
-                    User user = snapshot.getValue(User.class);
+        // ValueEventListener to a list of data will return the entire list of data as a single DataSnapshot,
+        // which you can then loop over to access individual children
+        // Create a value event listener to the database reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Get value from user class
+                User user = snapshot.getValue(User.class);
 
-                    // Get current logged in user fullname and set it
-                    getFullname.setText(String.format("Fullname: %s", user.getFullname()));
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                }
-            });
-        }
+                // Get current logged in user fullname and set it
+                getFullname.setText(String.format("Fullname: %s", user.getFullname()));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     // Function to show delete account dialog
@@ -182,57 +179,45 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         user.reauthenticate(authCredential).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                // If successful, delete the user
-                user.delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // Delete the user from the database
+                // Delete the user from the database
 
-                                // Query the user by ordering them by userID and search which one match with the current user
-                                Query userQuery = ref.orderByChild("userID").equalTo(user.getUid());
-                                // Initialize database and create reference: Tasks - userUid
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                                        .child("Tasks").child(user.getUid());
-                                // Remove value from that reference
-                                reference.removeValue();
+                // Query the user by ordering them by userID and search which one match with the current user
+                Query userQuery = ref.orderByChild("userID").equalTo(user.getUid());
+                // Remove value from Users - userUid reference
+                userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        snapshot.getRef().removeValue();
+                    }
 
-                                // Remove value from Users - userUid reference
-                                userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        snapshot.getRef().removeValue();
-                                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
 
-                                    }
-                                });
+                // Initialize database and create reference: Tasks - userUid
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                        .child("Tasks").child(user.getUid());
+                // Remove value from that reference
+                reference.removeValue();
 
-                                // Dismiss the progress dialog
-                                pd.dismiss();
-                                // Create toast successful message
-                                Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
+                // Delete the user
+                user.delete();
 
-                                // Sign this user out
-                                FirebaseAuth.getInstance().signOut();
+                // Dismiss the progress dialog
+                pd.dismiss();
 
-                                // Invoke to WelcomeActivity page
-                                Intent intent = new Intent(getActivity(), WelcomeActivity.class);
-                                startActivity(intent);
-                            }
-                        })
-                        // Else, if it failed
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Dismiss the progress dialog
-                                pd.dismiss();
-                                // Create a toast failed message
-                                Toast.makeText(getActivity(), "Failed to delete", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                // Create toast successful message
+                Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
+
+                // Sign this user out
+                FirebaseAuth.getInstance().signOut();
+
+                // Invoke to LoginActivity page
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+
             }
         })
                 // On failure,
