@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.plannerproject.Adapter.AdapterViewer;
+import com.example.plannerproject.Model.TaskModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,8 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
     private List<TaskModel> taskModelList;
-    private DatabaseReference ref;
     private AdapterViewer adapter;
-
+    private Query taskList;
 
     // onCreateView(): called to have the fragment instantiate its user interface view
     @Nullable
@@ -49,10 +52,11 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
         // Get the current logged in user uid
         String userUid = user.getUid();
 
-        // Initialize database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        // Get reference from the database: Tasks - userUid (current user)
-        ref = database.getReference().child("Tasks").child(userUid);
+        // Initialize database and reference
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        // Query the database by Tasks - userUid - order the child by status
+        // Search this object taskModel inside the database by its status equal to 0 (not completed tasks)
+        taskList = ref.child("Tasks").child(userUid).orderByChild("status").equalTo(0);
 
         // Avoid unnecessary layout passes
         // Changing the contents of the adapter doesn't change it's height or the width
@@ -95,7 +99,7 @@ public class HomeFragment extends Fragment implements OnDialogCloseListener, Ada
         // ValueEventListener to a list of data will return the entire list of data as a single DataSnapshot,
         // which you can then loop over to access individual children
         // Create a value event listener to the database reference
-        ref.addValueEventListener(new ValueEventListener() {
+        taskList.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // Clear or initialize list repeatedly before adding new list from firebase

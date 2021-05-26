@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Get the current logged in user
         FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        if(mFirebaseUser != null) {
+        if (mFirebaseUser != null) {
             // User logged in
         }
         else {

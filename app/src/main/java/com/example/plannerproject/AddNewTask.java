@@ -25,6 +25,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+
+import com.example.plannerproject.Model.TaskModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,6 +49,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
     private TextView getSetDate;
     private TextView getSetPriority;
     private TextView getSetClock;
+    private ImageView getFlagColor;
     private Calendar calendar;
     private Button getSaveButton;
     private DatabaseReference ref;
@@ -86,6 +90,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
         ImageView getClockBtn = view.findViewById(R.id.clock_button);
         ImageView getFlagBtn = view.findViewById(R.id.flag_button);
         getSetPriority = view.findViewById(R.id.setPriority);
+        getFlagColor = view.findViewById(R.id.setFlagColor);
 
         // Initialize calendar
         calendar = Calendar.getInstance();
@@ -295,6 +300,18 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
                 RadioButton selectedRadioButton = dialogView.findViewById(choose);
                 // Get the text of selected radio button
                 myPriority = selectedRadioButton.getText().toString();
+                // If myPriority equals to "HIGH", set the icon flag color to red
+                if (myPriority.equals("HIGH")) {
+                    getFlagColor.setColorFilter(Color.RED);
+                }
+                // If myPriority equals to "MEDIUM", set the icon flag color to yellow
+                if (myPriority.equals("MEDIUM")) {
+                    getFlagColor.setColorFilter(Color.YELLOW);
+                }
+                // If myPriority equals to "LOW", set the icon flag color to green
+                if (myPriority.equals("LOW")) {
+                    getFlagColor.setColorFilter(Color.GREEN);
+                }
                 // Set text
                 getSetPriority.setText(myPriority);
                 // Cancel the dialog
@@ -349,19 +366,6 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
 
     // Function to view time picker dialog
     private void viewTime() {
-        // Get the current time in milliseconds
-        final long date = System.currentTimeMillis();
-
-        // Set format date
-        SimpleDateFormat timeSdf = new SimpleDateFormat("hh : mm a"); // 12:08 PM
-        // Get the current time in the format
-        String timeString = timeSdf.format(date);
-        // Set the TextView with time
-        getSetClock.setText(timeString);
-
-        // Set the default time with current time
-        calendar.setTimeInMillis(System.currentTimeMillis());
-
         // Define variables with integer data type
         int hour, minute;
 

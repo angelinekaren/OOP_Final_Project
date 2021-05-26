@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,6 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.plannerproject.MainActivity;
+import com.example.plannerproject.Model.TaskModel;
+import com.example.plannerproject.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -82,7 +86,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         // Query the database by Completed - userUid - order the child by taskId
         // Search this object taskModel inside the database by its taskId
-        Query deleteCompletedTaskQuery = ref.child("Completed").child(userUid).orderByChild("taskId").equalTo(taskModel.getTaskId());
+        Query deleteCompletedTaskQuery = ref.child("Tasks").child(userUid).orderByChild("taskId").equalTo(taskModel.getTaskId());
 
         // Delete all value of this object taskModel inside the database
         deleteCompletedTaskQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -100,6 +104,7 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
 
         // Remove this object taskModel from taskModelCompletedList
         taskModelCompletedList.remove(position);
+
         // Notify any registered observers that the itemCount items previously
         // located at positionStart have been removed(deleted) from the data set
         notifyItemRangeRemoved(0, getItemCount());

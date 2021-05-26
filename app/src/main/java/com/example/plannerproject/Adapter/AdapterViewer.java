@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,6 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.plannerproject.AddNewTask;
+import com.example.plannerproject.MainActivity;
+import com.example.plannerproject.Model.TaskModel;
+import com.example.plannerproject.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,7 +37,6 @@ import java.util.List;
 
 // AdapterViewer class: retrieve data from the data set and for generating View objects based on that data
 public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHolder> {
-    private DatabaseReference ref;
     private List<TaskModel> taskModelList;
     MainActivity activity;
     private OnTaskListener onTaskListener;
@@ -55,7 +58,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         // Get the current logged in user uid
         String userUid = user.getUid();
 
-        // Initialize database and get reference
+        // Initialize database and reference
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         // Query the database by Tasks - userUid - order the child by taskId
         // Search this object taskModel inside the database by its taskId
@@ -132,7 +135,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
 
         // Instantiate database and get all tasks made by this user
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        ref = database.getReference().child("Tasks").child(userUid);
+        DatabaseReference reference = database.getReference().child("Tasks").child(userUid);
 
         // Get the object taskModel by its index/position inside taskModelList
         TaskModel taskModel = taskModelList.get(position);
@@ -142,57 +145,29 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         // Set all the contents of the item at given position: date, taskTitle, setClock, status, priority
         holder.setDate(taskModel.getDateTime());
         holder.setTaskTitle(taskModel.getTask());
-        holder.setClock(taskModel.getClockTime());
         holder.checkStatus(taskModel.getStatus());
+        holder.setClock(taskModel.getClockTime());
         holder.checkPriority(taskModel.getPriority());
 
-        // When checkBox is checked
+        // Create an alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // When check box is checked,
                 if (isChecked) {
-                    HashMap<String, Object> result = new HashMap<>();
-                    result.put("status", 1);
-
-                    // Update the status to 1 inside the database
-                    ref.child(taskModel.getTaskId()).updateChildren(result);
-
-                    // Create an alert dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
                     // Set message, title, positive button, and negative button
                     builder.setMessage("Is it completed?").setTitle("Completed Task")
                             // If positive button is click,
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    // Instantiate firebase database
-                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                                    // Create a reference into the database Completed - userUid - all the completed tasks
-                                    DatabaseReference reference = firebaseDatabase.getReference().child("Completed").child(userUid);
+                                    HashMap<String, Object> result = new HashMap<>();
+                                    result.put("status", 1);
 
-                                    // Delete this completed task from the view
-                                    deleteTask(position);
-
-                                    // Get this certain completed task
-                                    ref.child(taskModel.getTaskId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            // Add it to new reference
-                                            reference.child(taskModel.getTaskId()).setValue(snapshot.getValue(), new DatabaseReference.CompletionListener() {
-                                                @Override
-                                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                    Toast.makeText(getContext(), "Successfully moved to completed task!", Toast.LENGTH_SHORT).show();
-
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    });
+                                    // Update the status to 1 inside the database
+                                    reference.child(taskModel.getTaskId()).updateChildren(result);
                                 }
                             })
                             // If negative button is clicked,
@@ -206,13 +181,6 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
                     // Create and show the alert dialog
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }
-                else {
-                    // If not checked, status is 0
-                    HashMap<String, Object> resultFalse = new HashMap<>();
-                    resultFalse.put("status", 0);
-
-                    ref.child(taskModel.getTaskId()).updateChildren(resultFalse);
                 }
             }
         });

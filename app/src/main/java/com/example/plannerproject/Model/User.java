@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Model;
 
 // User model
 public class User {

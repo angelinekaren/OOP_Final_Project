@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.plannerproject.Model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -194,11 +196,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                                         .child("Tasks").child(user.getUid());
                                 // Remove value from that reference
                                 reference.removeValue();
-                                // Initialize database and create another reference: Completed - userUid
-                                DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference()
-                                        .child("Completed").child(user.getUid());
-                                // Remove value from that reference
-                                reference1.removeValue();
 
                                 // Remove value from Users - userUid reference
                                 userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
