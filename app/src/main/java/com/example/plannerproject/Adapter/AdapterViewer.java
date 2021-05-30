@@ -38,7 +38,7 @@ import java.util.List;
 // AdapterViewer class: retrieve data from the data set and for generating View objects based on that data
 public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHolder> {
     private List<TaskModel> taskModelList;
-    MainActivity activity;
+    private MainActivity activity;
     private OnTaskListener onTaskListener;
 
     // Constructor: activity, List objects of TaskModel, OnTaskListener (for each object view onClick)
@@ -194,26 +194,23 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
 
     // Class for each View objects
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        View view;
-        TextView getTaskTitle;
-        ImageView getFlagPriority;
-        TextView getDate;
-        TextView getClock;
-        CheckBox checkBox;
-        ImageView timer;
-        OnTaskListener onTaskListener;
+        private final TextView getTaskTitle;
+        private final ImageView getFlagPriority;
+        private final TextView getDate;
+        private final TextView getClock;
+        private final CheckBox checkBox;
+        private final OnTaskListener onTaskListener;
 
         public MyViewHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);
-            view = itemView;
 
             // Initialization
-            getTaskTitle = view.findViewById(R.id.taskTitle);
-            getDate = view.findViewById(R.id.due_date);
-            getClock = view.findViewById(R.id.due_time);
-            checkBox = view.findViewById(R.id.materialCheckBox);
-            timer = view.findViewById(R.id.timer);
-            getFlagPriority = view.findViewById(R.id.flagPriority);
+            getTaskTitle = itemView.findViewById(R.id.taskTitle);
+            getDate = itemView.findViewById(R.id.due_date);
+            getClock = itemView.findViewById(R.id.due_time);
+            checkBox = itemView.findViewById(R.id.materialCheckBox);
+            ImageView timer = itemView.findViewById(R.id.timer);
+            getFlagPriority = itemView.findViewById(R.id.flagPriority);
             this.onTaskListener = onTaskListener;
 
             // Refer to the interface View.OnClickListener

@@ -25,10 +25,8 @@ import java.util.List;
 
 // CompletedAdapter class: retrieve data from the data set and for generating View objects based on that data
 public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.CompletedViewHolder> {
-    private FirebaseDatabase database;
-    private DatabaseReference ref;
     private List<TaskModel> taskModelCompletedList;
-    MainActivity activity;
+    private MainActivity activity;
 
     // Constructor: activity, List objects of TaskModel
     public CompletedAdapter(MainActivity activity, List<TaskModel> taskModelCompletedList){
@@ -112,21 +110,19 @@ public class CompletedAdapter extends RecyclerView.Adapter<CompletedAdapter.Comp
 
     // Class for each View objects
     public static class CompletedViewHolder extends RecyclerView.ViewHolder {
-        View view;
-        TextView getDate;
-        TextView getTask;
-        TextView getClock;
-        ImageView getFlag;
+        private final TextView getDate;
+        private final TextView getTask;
+        private final TextView getClock;
+        private final ImageView getFlag;
 
         public CompletedViewHolder(@NonNull View itemView) {
             super(itemView);
-            view = itemView;
 
             // Initialization
-            getTask = view.findViewById(R.id.taskCompleted);
-            getDate = view.findViewById(R.id.dateCompleted);
-            getClock = view.findViewById(R.id.timeCompleted);
-            getFlag = view.findViewById(R.id.flagPriorityCompleted);
+            getTask = itemView.findViewById(R.id.taskCompleted);
+            getDate = itemView.findViewById(R.id.dateCompleted);
+            getClock = itemView.findViewById(R.id.timeCompleted);
+            getFlag = itemView.findViewById(R.id.flagPriorityCompleted);
 
         }
 

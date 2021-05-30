@@ -34,7 +34,6 @@ public class CompletedFragment extends Fragment {
     private List<TaskModel> taskModelCompletedList;
     private Query completedTask;
     private CompletedAdapter adapter;
-    private String userUid;
 
     // onCreateView(): called to have the fragment instantiate its user interface view
     @Override
@@ -51,7 +50,7 @@ public class CompletedFragment extends Fragment {
         // Get the current logged in user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         // Get the current logged in user uid
-        userUid = user.getUid();
+        String userUid = user.getUid();
 
         // Initialize database and create reference
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();

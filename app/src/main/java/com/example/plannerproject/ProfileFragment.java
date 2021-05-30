@@ -94,12 +94,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     // Function to show profile details
     public void profileDetails() {
-        // Get the current logged in user email
-        String email = user.getEmail();
-
-        // Set text the email
-        getEmail.setText(String.format("Email: %s", email));
-
         // ValueEventListener to a list of data will return the entire list of data as a single DataSnapshot,
         // which you can then loop over to access individual children
         // Create a value event listener to the database reference
@@ -109,7 +103,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 // Get value from user class
                 User user = snapshot.getValue(User.class);
 
-                // Get current logged in user fullname and set it
+                // Get current logged in user email and fullname and set it
+                getEmail.setText(String.format("Email: %s", user.getEmail()));
                 getFullname.setText(String.format("Fullname: %s", user.getFullname()));
             }
             @Override
