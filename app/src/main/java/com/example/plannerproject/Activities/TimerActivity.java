@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.animation.ObjectAnimator;
@@ -12,6 +12,9 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.plannerproject.R;
+import com.example.plannerproject.ObjectHandlers.SetTime;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.Locale;
 

@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.ObjectHandlers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.plannerproject.Activities.TimerActivity;
+import com.example.plannerproject.Listener.OnDialogCloseListener;
+import com.example.plannerproject.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 
@@ -23,7 +27,7 @@ public class SetTime extends BottomSheetDialogFragment {
 
     // Constructor
     // SetTime class extends Fragment where it needs to have no arguments constructor / no constructor at all
-    // This helper function is used to create new instance of SetTIME class
+    // This helper function is used to create new instance of SetTime class
     public static SetTime newInstance() {
         return new SetTime();
     }

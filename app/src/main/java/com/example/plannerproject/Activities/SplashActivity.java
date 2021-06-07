@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.example.plannerproject.R;
 
 public class SplashActivity extends AppCompatActivity {
 

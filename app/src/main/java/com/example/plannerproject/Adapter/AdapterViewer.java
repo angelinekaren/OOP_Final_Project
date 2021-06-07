@@ -12,15 +12,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.example.plannerproject.AddNewTask;
-import com.example.plannerproject.MainActivity;
+import com.example.plannerproject.ObjectHandlers.AddNewTask;
+import com.example.plannerproject.Activities.MainActivity;
 import com.example.plannerproject.Model.TaskModel;
 import com.example.plannerproject.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -89,7 +87,7 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         // Get the object taskModel by its index/position inside taskModelList
         TaskModel taskModel = taskModelList.get(position);
 
-        // Pass data (key-value pair) to HomeFragment
+        // Pass data (key-value pair)
         Bundle bundle = new Bundle();
         bundle.putString("dateTime", taskModel.getDateTime());
         bundle.putString("clockTime", taskModel.getClockTime());
@@ -97,13 +95,11 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         bundle.putString("id", taskModel.getTaskId());
         bundle.putString("priority", taskModel.getPriority());
 
-        // Create object from AddNewTask class
+        // Create an instance of AddNewTask class
         AddNewTask addNewTask = new AddNewTask();
-        // Supply the construction arguments for this HomeFragment
+        // Supply the construction arguments for the instance
         addNewTask.setArguments(bundle);
-        // getSupportFragmentManager:
-        // return the FragmentManager for interacting with fragments associated with MainActivity (HomeFragment)
-        // Show updated object
+        // Display dialog
         addNewTask.show(activity.getSupportFragmentManager(), addNewTask.getTag());
 
     }

@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.ObjectHandlers;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -27,7 +27,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
+import com.example.plannerproject.Listener.OnDialogCloseListener;
 import com.example.plannerproject.Model.TaskModel;
+import com.example.plannerproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import java.text.SimpleDateFormat;
+
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -342,7 +344,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
         day = calendar.get(Calendar.DATE);
 
         // Create DatePickerDialog, setting context, implementation of the listener, and start year, month, and day
-        DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.DialogTheme, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 // Since it starts counting months from 0, it'll return month value - 1
@@ -375,7 +377,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
 
         // Create TimePickerDialog, setting context, implementation of the listener,
         // and start hour, minute, and boolean is24HourView
-        TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(context, R.style.DialogTheme, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 // Since it is not a 24 hour view, we define for AM/PM

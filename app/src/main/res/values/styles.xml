@@ -57,4 +57,8 @@
         <item name="colorControlHighlight">@color/stated_checked</item>
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/darkBlue</item>
+    </style>
+
 </resources>

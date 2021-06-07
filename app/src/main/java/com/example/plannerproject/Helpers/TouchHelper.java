@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Helpers;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.plannerproject.Adapter.AdapterViewer;
+import com.example.plannerproject.R;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -56,7 +57,7 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // notifyItemChanged(): notify any registered observers that the item at position has changed
-                            // revert swipe animation
+                            // Revert swipe animation
                             adapter.notifyItemChanged(position);
                         }
                     });
@@ -68,6 +69,8 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
             // Else, if swipe right,
             // Call the editTask function to edit this certain task by its position
             adapter.editTask(position);
+            // Revert swipe animation
+            adapter.notifyItemChanged(position);
         }
     }
 

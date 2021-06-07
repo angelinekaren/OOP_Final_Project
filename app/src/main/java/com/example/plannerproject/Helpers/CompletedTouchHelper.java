@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Helpers;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.plannerproject.Adapter.CompletedAdapter;
+import com.example.plannerproject.R;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.plannerproject.MainActivity;
+import com.example.plannerproject.Activities.MainActivity;
 import com.example.plannerproject.Model.TaskModel;
 import com.example.plannerproject.R;
 import com.google.firebase.auth.FirebaseAuth;

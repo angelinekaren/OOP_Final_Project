@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Activities;
 
 
 import android.app.AlertDialog;
@@ -15,7 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.plannerproject.Activities.LoginActivity;
 import com.example.plannerproject.Model.User;
+import com.example.plannerproject.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;

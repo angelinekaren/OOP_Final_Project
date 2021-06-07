@@ -1,4 +1,4 @@
-package com.example.plannerproject;
+package com.example.plannerproject.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+
+import com.example.plannerproject.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,7 +44,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (currentUser != null) {
                         // Invoke to MainActivity page
-                        Intent MainActivity = new Intent(WelcomeActivity.this, MainActivity.class);
+                        Intent MainActivity = new Intent(WelcomeActivity.this, com.example.plannerproject.Activities.MainActivity.class);
                         startActivity(MainActivity);
                         WelcomeActivity.this.finish();
                     }
