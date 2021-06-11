@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -242,7 +243,10 @@ public class AdapterViewer extends RecyclerView.Adapter<AdapterViewer.MyViewHold
         // Check priority set by user
         public void checkPriority(String priority) {
             // If user doesn't set any priority: default color
-            if (priority == null) {
+            if (priority.equals("Priority")) {
+                Context context = getFlagPriority.getContext();
+                int color = ContextCompat.getColor(context, R.color.register_background);
+                getFlagPriority.setColorFilter(color);
                 return;
             }
             // If priority: HIGH, set flag imageview color to red

@@ -25,6 +25,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 
 import com.example.plannerproject.Listener.OnDialogCloseListener;
@@ -37,8 +38,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -52,7 +56,6 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
     private TextView getSetPriority;
     private TextView getSetClock;
     private ImageView getFlagColor;
-    private Calendar calendar;
     private Button getSaveButton;
     private DatabaseReference ref;
     private Context context;
@@ -61,6 +64,7 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
     private String id;
     private String myPriority;
     private String taskId;
+    private Calendar calendar;
     private boolean isUpdated = false;
 
     // Constructor
@@ -188,17 +192,30 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
             String clock = bundle.getString("clockTime");
             String priority = bundle.getString("priority");
 
-            // Set the new updated data
+            // Set the retrieved data
             getSetClock.setText(clock);
             getSetDate.setText(date);
             getTaskInput.setText(task);
             getSetPriority.setText(priority);
 
-            // Check if task title is empty
-            if (task.length() > 0) {
-                // If it's empty disable the save button and set them to gray
-                getSaveButton.setEnabled(false);
-                getSaveButton.setBackgroundColor(Color.GRAY);
+            // Set the flag color
+            if (priority.equals("Priority")) {
+                Context context = getFlagColor.getContext();
+                int color = ContextCompat.getColor(context, R.color.register_background);
+                getFlagColor.setColorFilter(color);
+                return;
+            }
+            // If priority: HIGH, set flag imageview color to red
+            if(priority.equals("HIGH")) {
+                getFlagColor.setColorFilter(Color.RED);
+            }
+            // If priority: MEDIUM, set flag imageview color to yellow
+            if(priority.equals("MEDIUM")) {
+                getFlagColor.setColorFilter(Color.YELLOW);
+            }
+            // If priority: LOW, set flag imageview color to green
+            if(priority.equals("LOW")) {
+                getFlagColor.setColorFilter(Color.GREEN);
             }
 
         }
@@ -208,6 +225,11 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
     private void setNewTask() {
         // Get the task title inputted by user
         String taskName = getTaskInput.getText().toString();
+        // Get the date, time, and priority set by user
+        String date = getSetDate.getText().toString();
+        String time = getSetClock.getText().toString();
+        String priority = getSetPriority.getText().toString();
+
         // Get the taskId key
         id = ref.push().getKey();
 
@@ -217,10 +239,11 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
             // Data have different data types, hence we use HashMap<String, Object>
             HashMap<String, Object> result = new HashMap<>();
             result.put("task", taskName);
-            result.put("dateTime", getDate);
-            result.put("clockTime", getTime);
-            result.put("priority", myPriority);
+            result.put("dateTime", date);
+            result.put("clockTime", time);
+            result.put("priority", priority);
 
+            
             // Pass this data at reference: Tasks - userUid (current user) - taskId and update
             ref.child(taskId).updateChildren(result)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -245,10 +268,11 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
                 // Create a message requiring user to fill it in
                 Toast.makeText(context, "Required to fill in new task!", Toast.LENGTH_SHORT).show();
             }
+
             // Else, if it's not empty
             else {
                 // Create new task with its fields: id, taskName, date, time, status, and priority
-                TaskModel taskModel = new TaskModel(id, taskName, getDate, getTime, 0, myPriority);
+                TaskModel taskModel = new TaskModel(id, taskName, date, time, 0, priority);
 
                 // Add and set the value in the database by reference Tasks - userUid - taskId
                 ref.child(id).setValue(taskModel).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -353,8 +377,10 @@ public class AddNewTask extends BottomSheetDialogFragment implements View.OnClic
                 month += 1;
                 // Format the date -> 09/04/2021
                 getDate = dayOfMonth + "/" + month + "/" + year;
+
                 // Set the TextView with date
                 getSetDate.setText(getDate);
+
             }
         }, year, month, day);
 

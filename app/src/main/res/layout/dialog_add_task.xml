@@ -50,7 +50,7 @@
             android:layout_width="77dp"
             android:layout_height="46dp"
             android:background="@android:color/transparent"
-            android:contentDescription="Set date"
+            android:contentDescription="Set time"
             app:layout_constraintEnd_toStartOf="@+id/saveButton"
             app:layout_constraintHorizontal_bias="0.055"
             app:layout_constraintStart_toEndOf="@+id/calendar_button"
@@ -62,7 +62,7 @@
             android:layout_width="77dp"
             android:layout_height="46dp"
             android:background="@android:color/transparent"
-            android:contentDescription="Set date"
+            android:contentDescription="Set flag"
             app:layout_constraintEnd_toStartOf="@+id/saveButton"
             app:layout_constraintHorizontal_bias="0.258"
             app:layout_constraintStart_toEndOf="@+id/clock_button"
@@ -118,7 +118,7 @@
             android:drawableLeft="@drawable/ic_time"
             android:drawablePadding="8dp"
             android:text="Set Time"
-            android:layout_marginRight="32dp"
+            android:layout_marginRight="30dp"
             android:textColor="@color/colorTime"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/setPriority"
@@ -134,7 +134,7 @@
                 android:id="@+id/setFlagColor"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginRight="5dp"
                 android:src="@drawable/ic_flag"/>
 
             <TextView
