@@ -93,7 +93,7 @@ public class ForgetActivity extends AppCompatActivity {
                 {
                     // Else, create an error message
                     String error = task.getException().toString();
-                    Toast.makeText(ForgetActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgetActivity.this, "Wrong email! Try again" , Toast.LENGTH_SHORT).show();
                 }
             }
         });

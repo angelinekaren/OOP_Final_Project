@@ -252,6 +252,8 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
                 anim.end();
                 // Call pauseTimer() function
                 pauseTimer();
+                // Set the startTimeMillis to 0 (starting time after reset)
+                startTimeMillis = 0;
                 // Set the timeLeftMillis with startTimeMillis: 0
                 timeLeftMillis = startTimeMillis;
                 // Set the start button text to "Start"
